@@ -67,6 +67,7 @@ ggplot(data=daily_activity, aes(x=TotalSteps, y=SedentaryMinutes)) + geom_point(
   geom_point(aes(color = SedentaryMinutes)) +
   scale_color_viridis_c()
 # the higher the sedentary minutes, the lower the total steps taken. Market this as a way for people to walk more and decrease the amount of sedentary minutes.
+# test
 
 # Bellabeat also offers a subscription based membership program which gives users 24/7 access to personalized guidance on nutrition, activity, sleep, health and beauty, and mindfulness based on their personal goals.
 #2. Select a Bellabeat product: Time (watch)
