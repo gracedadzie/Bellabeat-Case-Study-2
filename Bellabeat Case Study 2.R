@@ -53,6 +53,19 @@ sleep_day %>%
          TotalTimeInBed) %>% 
   summary()
 
+991/60
+420/60
+# This tells us that that the average fitbit user takes around 7638 steps, covering 5.5 mi and is sedentary for 991 minutes (16 hours) a day
+# Also tells us that most users sleep once a day for approx 7 hours a day, average spend approx 7 hours in bed give or take the time (40 mins or so) it takes for them to sleep/wake up.
+# Need to check for possible outliers
+
+# Relationship between steps taken a day and number of sedentary minutes
+library('tidyverse')
+ggplot(data=daily_activity, aes(x=TotalSteps, y=SedentaryMinutes)) + geom_point() +
+  labs(title="Activity and Sedentary Minutes",  subtitle = "FitBit 2016 Data", x= "Total Steps", y="Sedentary Minutes")+
+  geom_point(aes(color = SedentaryMinutes)) +
+  scale_color_viridis_c()
+# the higher the sedentary minutes, the lower the total steps taken. Market this as a way for people to walk more and decrease the amount of sedentary minutes.
 
 #2. Select a Bellabeat product: Time (watch)
 #3. Analyze the smart device usage data to gain insights on how people are already using their smart devices
