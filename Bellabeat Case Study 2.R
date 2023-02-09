@@ -65,10 +65,28 @@ ggplot(data=daily_activity, aes(x=TotalSteps, y=SedentaryMinutes)) + geom_point(
   labs(title="Activity and Sedentary Minutes",  subtitle = "FitBit 2016 Data", x= "Total Steps", y="Sedentary Minutes")+
   geom_point(aes(color = SedentaryMinutes)) +
   scale_color_viridis_c()
-# the higher the sedentary minutes, the lower the total steps taken. Market this as a way for people to walk more and decrease the amount of sedentary minutes.
-# test
+# The higher the sedentary minutes, the lower the total steps taken. Market this as a way for people to walk more and decrease the amount of sedentary minutes.
+# Can market the watch as a way to minimize sedentary minutes
+# Watch can help increase your level of activity by sending reminders
+# Check whether this contributes to amount of calories burned?
 
-# Bellabeat also offers a subscription based membership program which gives users 24/7 access to personalized guidance on nutrition, activity, sleep, health and beauty, and mindfulness based on their personal goals.
+# Relationship between minutes asleep and time in bed
+
+ggplot(data = sleep_day, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) +
+  geom_point(aes(color = TotalTimeInBed)) + 
+  labs(title = "Relationship between Sleep and Time in Bed", x= "Total Minutes Asleep", y= "Total Time in Bed")
+
+# Increase of time in bed leads to an increase in sleep time. 
+# Can market the watch as an alarm to help improve activity by reminding users to get out of bed
+# Can look into BMI
+
+library(tidyverse)
+weight_info <- read.csv("C:/Users/graci/Downloads/Fitabase Data 4.12.16-5.12.16/weightLogInfo_merged.csv")
+
+ggplot(data = weight_info, aes(x=WeightKg, y=BMI)) +
+  geom_point(aes(color= BMI)) +
+  labs(title = "Weight Vs. BMI")
+
 #2. Select a Bellabeat product: Time (watch)
 #3. Analyze the smart device usage data to gain insights on how people are already using their smart devices
 #4. Produce high-level recommendations on how these trends can inform Bellabeat's marketing strategy moving forward
