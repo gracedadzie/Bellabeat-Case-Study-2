@@ -33,12 +33,25 @@ library(dplyr) #load dplyr package in order to use n_distinct
 n_distinct(daily_activity$Id)
 n_distinct(sleep_day$Id)
 
-#There's a discrepancy between number of unique values in daily activity (33) vs. sleep day data frames (24). Users may not wear watch to sleep.
+#There's a difference between number of unique values in daily activity (33) vs. sleep day data frames (24). Users may not wear watch to sleep.
 
 nrow(daily_activity)
 nrow(sleep_day)
 
-#
+#There's a difference in the number of rows within the daily activity data frame and the sleep day data frame.
+
+#Summary statistics for each data frame:
+daily_activity %>% 
+  select(TotalSteps,
+         TotalDistance,
+         SedentaryMinutes) %>% 
+  summary()
+
+sleep_day %>% 
+  select(TotalSleepRecords,
+         TotalMinutesAsleep,
+         TotalTimeInBed) %>% 
+  summary()
 
 
 #2. Select a Bellabeat product: Time (watch)
