@@ -87,6 +87,14 @@ ggplot(data = weight_info, aes(x=WeightKg, y=BMI)) +
   geom_point(aes(color= BMI)) +
   labs(title = "Weight Vs. BMI")
 
+# Combine the data frames
+
+combined_data <- merge(sleep_day, daily_activity, by="Id")
+view(combined_data)
+summary_data <- merge(combined_data, weight_info, by="Id")
+view(summary_data)
+
+
 #2. Select a Bellabeat product: Time (watch)
 #3. Analyze the smart device usage data to gain insights on how people are already using their smart devices
 #4. Produce high-level recommendations on how these trends can inform Bellabeat's marketing strategy moving forward
