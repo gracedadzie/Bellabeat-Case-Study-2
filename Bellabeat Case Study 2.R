@@ -17,6 +17,13 @@ gitcreds_get() #create a github repository to track project changes
 
 install.packages('tidyverse')
 library(tidyverse) #installing and loading common packages and libraries
+library(knitr)
+library(readxl)
+Summary_of_Fitbit <- read_excel("C:\\Users\\graci\\Downloads\\Fitabase Data 4.12.16-5.12.16\\Summary of Fitbit.xlsx",
+                                col_types = c("text", "text", "text"))
+View(Summary_of_Fitbit)
+
+
 daily_activity <-  read.csv("C:/Users/graci/Downloads/Fitabase Data 4.12.16-5.12.16/dailyActivity_merged.csv")
 head(daily_activity) #shows the first 6 rows of data in the data frame
 colnames(daily_activity) #provides the column names within the data frame
@@ -89,15 +96,32 @@ ggplot(data = weight_info, aes(x=WeightKg, y=BMI)) +
 
 # Combine the data frames
 
-combined_data <- merge(sleep_day, daily_activity, by="Id")
+combined_data <- merge(sleep_day, daily_activity, by="Id", all= TRUE)
 view(combined_data)
-summary_data <- merge(combined_data, weight_info, by="Id")
+summary_data <- merge(combined_data, weight_info, by="Id", all= TRUE)
 view(summary_data)
 
+n_distinct(summary_data$Id) # 6 distinct values
+n_distinct(combined_data$Id) # 24 distinct values
+ # There were more distinct Ids in the daily_activity data set
 
+n_distinct(summary_data$Id) #now the total number of distinct IDs is equal to
+# daily_activity data frame
+head(summary_data)
+str(summary_data)
+
+# Do participants who sleep more also take more or fewer steps during the day?
+ggplot(data = summary_data, aes(x= TotalMinutesAsleep, y=TotalSteps)) + geom_point()
+
+df1 <- sleep_day %>%  inner_join(daily_activity,
+                                 by = c('Id' = 'Id', 'SleepDay' = 'ActivityDate'))
+
+view(df1)
 #2. Select a Bellabeat product: Time (watch)
-#3. Analyze the smart device usage data to gain insights on how people are already using their smart devices
-#4. Produce high-level recommendations on how these trends can inform Bellabeat's marketing strategy moving forward
+#3. Analyze the smart device usage data to gain insights on how people are 
+# already using their smart devices
+#4. Produce high-level recommendations on how these trends can inform 
+# Bellabeat's marketing strategy moving forward
 
 #1.What are some trends in smart device usage?
 #2.How could these trends apply to Bellabeat customers?
