@@ -34,6 +34,12 @@ head(sleep_day)
 colnames(sleep_day)
 str(sleep_day)
 
+steps_daily <- read.csv("C:/Users/graci/Downloads/Fitabase Data 4.12.16-5.12.16/dailySteps_merged.csv")
+head(steps_daily)
+colnames(steps_daily)
+str(steps_daily)
+
+
 #We will merge the data using the ID field
 
 library(dplyr) #load dplyr package in order to use n_distinct
@@ -42,8 +48,13 @@ library(skimr)
 library(janitor)
 library(lubridate)
 
-n_distinct(daily_activity$Id)
-n_distinct(sleep_day$Id)
+n_distinct(daily_activity$Id) #33
+n_distinct(sleep_day$Id) #24
+n_distinct(steps_daily) #940
+
+n_unique(steps_daily)
+
+sum(duplicated(steps_daily)) # 0 duplicates
 
 daily_activity <- daily_activity %>% 
   distinct() %>% 
@@ -53,13 +64,13 @@ sum(duplicated(daily_activity))
 
 sleep_day <- sleep_day %>% 
   distinct() %>% 
-  drop_na()
+  drop_na() # removing 3 duplicates at end of data with no id/date values
 
-sum(duplicated(sleep_day))
+sum(duplicated(sleep_day)) # now we have 0 duplicates
 
-
-nrow(daily_activity)
-nrow(sleep_day)
+nrow(daily_activity) #940
+nrow(sleep_day) #410
+nrow(steps_daily) #940
 
 #There's a difference in the number of rows within the daily activity data frame and the sleep day data frame.
 
@@ -76,8 +87,24 @@ sleep_day %>%
          TotalTimeInBed) %>% 
   summary()
 
-991/60
-420/60
+steps_daily %>% 
+  select(StepTotal) %>% 
+  summary()
+
+# Change all the column titles to lower case to avoid case sensitivity
+
+clean_names(daily_activity)
+daily_activity<- rename_with(daily_activity, tolower)
+
+clean_names(sleep_day)
+sleep_day <- rename_with(sleep_day, tolower)
+
+clean_names(steps_daily)
+steps_daily <- rename_with(steps_daily, tolower)
+
+clean_names(weight_info)
+weight_info <- rename_with(weight_info, tolower)
+
 # This tells us that that the average fitbit user takes around 7638 steps, covering 5.5 mi and is sedentary for 991 minutes (16 hours) a day
 # Also tells us that most users sleep once a day for approx 7 hours a day, average spend approx 7 hours in bed give or take the time (40 mins or so) it takes for them to sleep/wake up.
 # Need to check for possible outliers
@@ -106,34 +133,31 @@ ggplot(data = sleep_day, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) +
 library(tidyverse)
 weight_info <- read.csv("C:/Users/graci/Downloads/Fitabase Data 4.12.16-5.12.16/weightLogInfo_merged.csv")
 
-weight_info <- weight_info %>% 
-  distinct()%>% 
-  drop_na()
-
-sum(duplicated(weight_info))
 
 ggplot(data = weight_info, aes(x=WeightKg, y=BMI)) +
   geom_point(aes(color= BMI)) +
   labs(title = "Weight Vs. BMI")
 
+# change the title of date field to read "date"
 
 daily_activity <- daily_activity %>% 
   rename(date = ActivityDate) %>% 
   mutate(date = as_date(date, format = "%m/%d/%Y")) #change the format of the date
 
-# changed the title of date field to read "date"
 
 sleep_day <- sleep_day %>% 
-  rename(date = SleepDay) %>% 
+  mutate(date = as_date(date, format = "%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone()))
+
+weight_info <- weight_info %>%
   mutate(date = as_date(date, format = "%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone()))
 
 head(daily_activity)
 head(sleep_day)
 
 # Combine the data frames by merging the date and time columns
-combined_data <- merge(sleep_day, daily_activity, by="Id", all= TRUE)
+daily_activity_sleep<- merge(sleep_day, daily_activity, by= c("id", "date"))
 view(combined_data)
-summary_data <- merge(combined_data, weight_info, by="Id", all= TRUE)
+summary_data <- merge(combined_data, weight_info, by="id", all= TRUE)
 view(summary_data)
 
 n_distinct(summary_data$Id) # 6 distinct values
@@ -146,10 +170,7 @@ head(summary_data)
 str(summary_data)
 
 # Do participants who sleep more also take more or fewer steps during the day?
-ggplot(data = summary_data, aes(x= TotalMinutesAsleep, y=TotalSteps)) + geom_point()
 
-df1 <- sleep_day %>%  inner_join(daily_activity,
-                                 by = c('Id' = 'Id', 'SleepDay' = 'ActivityDate'))
 
 view(df1)
 #2. Select a Bellabeat product: Time (watch)
