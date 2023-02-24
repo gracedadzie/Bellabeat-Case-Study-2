@@ -37,10 +37,26 @@ str(sleep_day)
 #We will merge the data using the ID field
 
 library(dplyr) #load dplyr package in order to use n_distinct
+library(here)
+library(skimr)
+library(janitor)
+library(lubridate)
+
 n_distinct(daily_activity$Id)
 n_distinct(sleep_day$Id)
 
-#There's a difference between number of unique values in daily activity (33) vs. sleep day data frames (24). Users may not wear watch to sleep.
+daily_activity <- daily_activity %>% 
+  distinct() %>% 
+  drop_na()
+
+sum(duplicated(daily_activity))
+
+sleep_day <- sleep_day %>% 
+  distinct() %>% 
+  drop_na()
+
+sum(duplicated(sleep_day))
+
 
 nrow(daily_activity)
 nrow(sleep_day)
@@ -90,12 +106,31 @@ ggplot(data = sleep_day, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) +
 library(tidyverse)
 weight_info <- read.csv("C:/Users/graci/Downloads/Fitabase Data 4.12.16-5.12.16/weightLogInfo_merged.csv")
 
+weight_info <- weight_info %>% 
+  distinct()%>% 
+  drop_na()
+
+sum(duplicated(weight_info))
+
 ggplot(data = weight_info, aes(x=WeightKg, y=BMI)) +
   geom_point(aes(color= BMI)) +
   labs(title = "Weight Vs. BMI")
 
-# Combine the data frames
 
+daily_activity <- daily_activity %>% 
+  rename(date = ActivityDate) %>% 
+  mutate(date = as_date(date, format = "%m/%d/%Y")) #change the format of the date
+
+# changed the title of date field to read "date"
+
+sleep_day <- sleep_day %>% 
+  rename(date = SleepDay) %>% 
+  mutate(date = as_date(date, format = "%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone()))
+
+head(daily_activity)
+head(sleep_day)
+
+# Combine the data frames by merging the date and time columns
 combined_data <- merge(sleep_day, daily_activity, by="Id", all= TRUE)
 view(combined_data)
 summary_data <- merge(combined_data, weight_info, by="Id", all= TRUE)
@@ -103,7 +138,7 @@ view(summary_data)
 
 n_distinct(summary_data$Id) # 6 distinct values
 n_distinct(combined_data$Id) # 24 distinct values
- # There were more distinct Ids in the daily_activity data set
+# There were more distinct Ids in the daily_activity data set
 
 n_distinct(summary_data$Id) #now the total number of distinct IDs is equal to
 # daily_activity data frame
